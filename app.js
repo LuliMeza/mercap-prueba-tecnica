@@ -15,26 +15,24 @@ class Llamada {
 class LlamadaLocal extends Llamada {
 
     esHorarioPico(){
+        const dia = this.fecha.getDay();
+        const hora = this.fecha.getHours();
 
-    const dia = this.fecha.getDay();
-    const hora = this.fecha.getHours();
-
-    return (
-        dia >=1 &&
-        dia <=5 &&
-        hora >=8 &&
-        hora <20
-    );
+        return (
+            dia >=1 &&
+            dia <=5 &&
+            hora >=8 &&
+            hora <20
+        );
     }
 
     calcularCosto(){
+        const tarifa =
+            this.esHorarioPico()
+            ? 0.20
+            : 0.10;
 
-    const tarifa =
-        this.esHorarioPico()
-        ? 0.20
-        : 0.10;
-
-    return tarifa * this.duracion;
+        return tarifa * this.duracion;
     }
 
 }
@@ -79,22 +77,18 @@ class Factura {
     }
 
     llamadasDelMes(){
-
-    return this.llamadas.filter(
-        l =>
-        l.fecha.getMonth()+1 === this.mes &&
-        l.fecha.getFullYear() === this.anio
-    );
-
+        return this.llamadas.filter(
+            l =>
+            l.fecha.getMonth()+1 === this.mes &&
+            l.fecha.getFullYear() === this.anio
+        );
     }
 
     totalConsumo(){
-
-    return this.llamadasDelMes().reduce(
-        (acc,l)=> acc + l.calcularCosto(),
-        0
-    );
-
+        return this.llamadasDelMes().reduce(
+            (acc,l)=> acc + l.calcularCosto(),
+            0
+        );
     }
 
     totalPagar(){
@@ -102,48 +96,46 @@ class Factura {
     }
 
     emitirFactura(){
-
-    console.log(
-        "FACTURA TELEFONICA " +
-        this.mes +
-        "/" +
-        this.anio
-    );
-
-    console.log("--------------------------");
-
-    this.llamadasDelMes().forEach(l => {
-        const fechaFormateada = 
-            l.fecha.toLocaleString();
-
         console.log(
-            l.destino +
-            " - " +
-            fechaFormateada +
-            " - " +
-            l.duracion +
-            " min - $" +
-            l.calcularCosto().toFixed(2)
+            "FACTURA TELEFONICA " +
+            this.mes +
+            "/" +
+            this.anio
         );
 
-    });
+        console.log("--------------------------");
 
-    console.log("--------------------------");
-    console.log("Bono: $" + this.abono.toFixed(2));
-    console.log(
-        "Consumo: $" +
-        this.totalConsumo().toFixed(2)
-    );
+        this.llamadasDelMes().forEach(l => {
+            const fechaFormateada = 
+                l.fecha.toLocaleString();
 
-    console.log(
-        "Total a pagar: $" +
-        this.totalPagar().toFixed(2)
-    );
+            console.log(
+                l.destino +
+                " - " +
+                fechaFormateada +
+                " - " +
+                l.duracion +
+                " min - $" +
+                l.calcularCosto().toFixed(2)
+            );
+
+        });
+
+        console.log("--------------------------");
+        console.log("Bono: $" + this.abono.toFixed(2));
+        console.log(
+            "Consumo: $" +
+            this.totalConsumo().toFixed(2)
+        );
+
+        console.log(
+            "Total a pagar: $" +
+            this.totalPagar().toFixed(2)
+        );
 
     }
 
 }
-
 
 // Datos simulados en memoria
 
@@ -189,7 +181,7 @@ const llamadas = [
         0.55
     ),
 
-    // para verificar que no entre
+    // datos de otro mes para probar el filtrado
     new LlamadaLocal(
         "Buenos Aires",
         8,
@@ -197,8 +189,6 @@ const llamadas = [
     )
 
 ];
-
-
 
 const factura = new Factura(
     5.00,
